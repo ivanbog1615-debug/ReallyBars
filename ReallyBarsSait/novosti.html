@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Новости — ReallyBars</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="container nav">
+      <a href="index.html" class="logo">Really<span>Bars</span></a>
+      <nav class="nav-links" id="nav-links">
+        <a href="index.html">Главная</a>
+        <a href="index.html#join">Как играть</a>
+        <a href="novosti.html" class="active">Новости</a>
+        <a href="pravila.html">Правила</a>
+        <a href="index.html#contacts">Контакты</a>
+        <a href="https://vk.com/reallybars" target="_blank" rel="noopener">ВКонтакте</a>
+      </nav>
+      <button class="burger" id="burger" aria-label="Меню">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <h1 class="section-title">Новости сервера</h1>
+        <p class="section-sub">Обновления, ивенты и важные объявления ReallyBars.</p>
+
+        <div id="loading" style="color:var(--muted); padding:20px 0;">Загрузка новостей…</div>
+        <div id="posts-list" class="news-list"></div>
+        <div id="empty-state" style="display:none; text-align:center; padding:60px 20px; color:var(--muted);">
+          <div style="font-size:48px; margin-bottom:14px;">📰</div>
+          <p>Пока новостей нет. Загляни позже!</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      © 2026 ReallyBars — SMP Minecraft сервер (Bedrock). Не связан с Mojang AB.
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    const { createClient } = window.supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    function formatDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleString("ru-RU", {
+        day: "2-digit", month: "long", year: "numeric",
+        hour: "2-digit", minute: "2-digit"
+      });
+    }
+
+    async function loadPosts() {
+      const loading = document.getElementById("loading");
+      const listEl  = document.getElementById("posts-list");
+      const emptyEl = document.getElementById("empty-state");
+
+      const { data, error } = await db
+        .from("posts")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      loading.style.display = "none";
+
+      if (error) {
+        loading.style.display = "block";
+        loading.style.color = "#ff8f8f";
+        loading.textContent = "Ошибка загрузки: " + error.message;
+        return;
+      }
+
+      if (!data || !data.length) {
+        emptyEl.style.display = "block";
+        return;
+      }
+
+      listEl.innerHTML = data.map(p => `
+        <article class="news-card">
+          <div class="news-head">
+            <span class="news-tag">${escapeHtml(p.tag)}</span>
+            <span class="news-date">${formatDate(p.created_at)}</span>
+          </div>
+          <h2 class="news-title">${escapeHtml(p.title)}</h2>
+          <p class="news-text">${escapeHtml(p.text)}</p>
+          <div class="news-author">Автор: ${escapeHtml(p.author)}</div>
+        </article>
+      `).join("");
+    }
+
+    loadPosts();
+
+    const burger = document.getElementById("burger");
+    const navLinks = document.getElementById("nav-links");
+    burger.addEventListener("click", () => navLinks.classList.toggle("open"));
+  </script>
+
+</body>
+</html>

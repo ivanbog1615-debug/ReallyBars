@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReallyBars — SMP сервер Minecraft Bedrock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="container nav">
+      <a href="index.html" class="logo">Really<span>Bars</span></a>
+
+<nav class="nav-links" id="nav-links">
+  <a href="index.html" class="active">Главная</a>
+  <a href="index.html#join">Как играть</a>
+  <a href="novosti.html">Новости</a>
+  <a href="pravila.html">Правила</a>
+  <a href="index.html#contacts">Контакты</a>
+  <a href="https://vk.com/reallybars" target="_blank" rel="noopener">ВКонтакте</a>
+</nav>
+
+      <button class="burger" id="burger" aria-label="Меню">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-card">
+          <div class="badge">SMP • Bedrock • 1.20+</div>
+          <h1>Really<span class="accent">Bars</span></h1>
+          <p>
+            Современный Minecraft-сервер в режиме <b>SMP</b>: чистое выживание, ивенты
+            и дружелюбное сообщество. Онлайн до <b>100 игроков</b> — заходи и строй свою историю.
+          </p>
+
+          <div class="ip-box">
+            <span id="server-ip">ReallyBars.minerent.io</span>
+            <button class="btn btn-primary" id="copy-ip">Копировать IP</button>
+          </div>
+
+          <div class="hero-buttons">
+            <a href="#join" class="btn btn-primary">Как играть</a>
+            <a href="https://discord.gg/yourdiscord" class="btn">Discord</a>
+            <a href="https://vk.com/reallybars" target="_blank" rel="noopener" class="btn btn-vk">ВКонтакте</a>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-value online" id="online-count">3</div>
+              <div class="stat-label">Игроков онлайн</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">SMP</div>
+              <div class="stat-label">Режим</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">100</div>
+              <div class="stat-label">Слотов</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="container">
+        <h2 class="section-title">Почему ReallyBars?</h2>
+        <p class="section-sub">Всё, что нужно для комфортной игры с друзьями.</p>
+
+        <div class="grid">
+          <article class="card">
+            <div class="icon">⚡</div>
+            <h3>Низкий пинг</h3>
+            <p>Мощный хостинг и оптимизация сервера — играем стабильно, без лагов.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🌍</div>
+            <h3>Выживание SMP</h3>
+            <p>Классический survival с приватами, экономикой и дружелюбными игроками.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🎉</div>
+            <h3>Ивенты</h3>
+            <p>Регулярные конкурсы, награды, кейсы и праздничные события.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🛡️</div>
+            <h3>Защита</h3>
+            <p>Приваты, античит и активная администрация помогут сохранить постройки.</p>
+          </article>
+          <article class="card">
+            <div class="icon">💚</div>
+            <h3>Сообщество</h3>
+            <p>Адекватные игроки, Discord, ВКонтакте и совместные проекты.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🚀</div>
+            <h3>Стабильность</h3>
+            <p>Сервер работает 24/7. Онлайн до 100 игроков одновременно.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="join">
+      <div class="container">
+        <h2 class="section-title">Как начать играть</h2>
+        <p class="section-sub">Три простых шага — и ты уже на сервере.</p>
+
+        <div class="steps">
+          <div class="step">
+            <h3>Скопируй IP</h3>
+            <p>Нажми «Копировать IP» выше. Адрес: <b>ReallyBars.minerent.io</b></p>
+          </div>
+          <div class="step">
+            <h3>Запусти Minecraft</h3>
+            <p>Открой <b>Minecraft Bedrock Edition</b> версии 1.20+.</p>
+          </div>
+          <div class="step">
+            <h3>Играй!</h3>
+            <p>«Друзья» → «Добавить сервер». Режим SMP, сейчас онлайн: <b>3</b> игрока.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contacts">
+      <div class="container">
+        <h2 class="section-title">Контакты</h2>
+        <p class="section-sub">Присоединяйся к сообществу ReallyBars.</p>
+
+        <div class="hero-buttons">
+          <a href="https://vk.com/reallybars" target="_blank" rel="noopener" class="btn btn-vk">ВКонтакте</a>
+          <a href="https://discord.gg/yourdiscord" class="btn">Discord</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      © 2026 ReallyBars — SMP Minecraft сервер (Bedrock). Не связан с Mojang AB.
+    </div>
+  </footer>
+
+  <script>
+    const SERVER_IP = "ReallyBars.minerent.io";
+    const ONLINE = 3;
+
+    document.getElementById("server-ip").textContent = SERVER_IP;
+    document.getElementById("online-count").textContent = ONLINE;
+
+    const copyBtn = document.getElementById("copy-ip");
+    copyBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(SERVER_IP);
+      } catch (e) {
+        const ta = document.createElement("textarea");
+        ta.value = SERVER_IP;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      copyBtn.textContent = "Скопировано!";
+      setTimeout(() => copyBtn.textContent = "Копировать IP", 1600);
+    });
+
+    const burger = document.getElementById("burger");
+    const navLinks = document.getElementById("nav-links");
+    burger.addEventListener("click", () => navLinks.classList.toggle("open"));
+    document.querySelectorAll(".nav-links a").forEach(a =>
+      a.addEventListener("click", () => navLinks.classList.remove("open"))
+    );
+  </script>
+
+</body>
+</html>

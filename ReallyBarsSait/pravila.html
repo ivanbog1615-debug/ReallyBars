@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Правила — ReallyBars</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="container nav">
+      <a href="index.html" class="logo">Really<span>Bars</span></a>
+
+      <nav class="nav-links" id="nav-links">
+        <a href="index.html">Главная</a>
+        <a href="index.html#join">Как играть</a>
+        <a href="pravila.html" class="active">Правила</a>
+        <a href="index.html#contacts">Контакты</a>
+        <a href="https://vk.com/reallybars" target="_blank" rel="noopener">ВКонтакте</a>
+      </nav>
+
+      <button class="burger" id="burger" aria-label="Меню">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="page-card">
+          <div class="badge">ReallyBars • SMP</div>
+          <h1 style="font-size: clamp(30px, 4.5vw, 48px); letter-spacing: -1px;">Правила сервера</h1>
+
+          <div class="rules-text" style="margin-top: 26px;">
+            <p>
+              На сервере ReallyBars запрещается использование любых читов, x-ray, killaura,
+              fly, speed, autoclicker и прочих сторонних программ, модов и скриптов, дающих
+              преимущество перед другими игроками. Запрещается гриферство — то есть
+              разрушение, поджог, заливка лавой или водой, а также порча чужих построек
+              и территорий без разрешения владельца. Нельзя красть предметы из чужих
+              сундуков, печек, сундуков-ловушек и любых других контейнеров, принадлежащих
+              другим игрокам.
+            </p>
+
+            <p>
+              Запрещаются оскорбления, угрозы, травля, разжигание конфликтов, токсичное
+              поведение, а также любые проявления дискриминации по национальности, религии,
+              полу или возрасту. Нельзя спамить, флудить, писать капсом, злоупотреблять
+              глобальным чатом и засорять его бессмысленными сообщениями. Запрещён обман
+              администрации, попытки обхода бана или мьюта, использование чужих аккаунтов
+              и создание твинков для обхода наказаний.
+            </p>
+
+            <p>
+              Запрещается реклама других серверов, сторонних проектов, ресурсов, магазинов
+              и каналов без письменного разрешения администрации. Нельзя распространять
+              личную информацию других игроков без их согласия, а также публиковать
+              ссылки на вредоносные сайты и файлы. Запрещается намеренно ломать работу
+              сервера: вызывать лаги, перегружать чат, использовать баги и дюпы, а также
+              скрывать найденные ошибки от администрации. За нарушение любого из этих
+              правил предусмотрен мьют, временный или постоянный бан без возврата вещей.
+            </p>
+          </div>
+
+          <div class="hero-buttons" style="margin-top: 34px;">
+            <a href="index.html" class="btn btn-primary">← На главную</a>
+            <a href="https://vk.com/reallybars" target="_blank" rel="noopener" class="btn btn-vk">ВКонтакте</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      © 2026 ReallyBars — SMP Minecraft сервер (Bedrock). Не связан с Mojang AB.
+    </div>
+  </footer>
+
+  <script>
+    const burger = document.getElementById("burger");
+    const navLinks = document.getElementById("nav-links");
+    burger.addEventListener("click", () => navLinks.classList.toggle("open"));
+    document.querySelectorAll(".nav-links a").forEach(a =>
+      a.addEventListener("click", () => navLinks.classList.remove("open"))
+    );
+  </script>
+
+</body>
+</html>

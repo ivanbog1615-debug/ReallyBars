@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель — ReallyBars</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="container nav">
+      <a href="index.html" class="logo">Really<span>Bars</span></a>
+      <nav class="nav-links" id="nav-links">
+        <a href="index.html">Главная</a>
+        <a href="novosti.html">Новости</a>
+        <a href="pravila.html">Правила</a>
+        <a href="admin-nov.html" class="active">Админ</a>
+      </nav>
+      <button class="burger" id="burger" aria-label="Меню">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+
+        <!-- ВХОД -->
+        <div class="page-card" id="login-screen" style="display:none;">
+          <div class="badge">🔒 Только для админов</div>
+          <h1 style="font-size: clamp(26px, 4vw, 40px); letter-spacing:-1px;">Вход в панель</h1>
+          <p style="color: var(--muted); margin-bottom: 24px;">Введите email и пароль администратора.</p>
+
+          <form id="login-form" style="display:flex; flex-direction:column; gap:12px;">
+            <input type="email" id="admin-email" placeholder="Email" class="input" required autocomplete="username">
+            <input type="password" id="admin-pass" placeholder="Пароль" class="input" required autocomplete="current-password">
+            <button type="submit" class="btn btn-primary" id="login-btn">Войти</button>
+          </form>
+
+          <p id="login-error" style="color:#ff6b6b; margin-top:14px; display:none;"></p>
+        </div>
+
+        <!-- ПАНЕЛЬ -->
+        <div id="panel-screen" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:24px;">
+            <div>
+              <h1 class="section-title" style="margin:0;">Управление новостями</h1>
+              <p class="section-sub" style="margin:6px 0 0;">Создавай, редактируй и удаляй посты.</p>
+            </div>
+            <button class="btn" id="logout-btn">Выйти</button>
+          </div>
+
+          <div class="page-card" style="margin-bottom:32px;">
+            <h2 id="form-title" style="margin:0 0 20px; font-size:20px;">Новый пост</h2>
+
+            <form id="post-form" style="display:flex; flex-direction:column; gap:14px;">
+              <input type="hidden" id="post-id">
+              <input type="text" id="post-title" placeholder="Заголовок" class="input" required maxlength="120">
+              <input type="text" id="post-tag" placeholder="Тег (Новость / Обновление / Ивент)" class="input" maxlength="30">
+              <input type="text" id="post-author" placeholder="Автор (по умолчанию: Администратор)" class="input" maxlength="40">
+              <textarea id="post-text" placeholder="Текст новости..." class="input" rows="8" required maxlength="3000"></textarea>
+
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="submit" class="btn btn-primary" id="submit-btn">Опубликовать</button>
+                <button type="button" class="btn" id="cancel-btn" style="display:none;">Отменить</button>
+              </div>
+            </form>
+
+            <p id="form-msg" style="margin-top:14px; display:none;"></p>
+          </div>
+
+          <h2 style="margin:0 0 16px; font-size:20px;">Опубликованные посты</h2>
+          <div id="admin-list"></div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2026 ReallyBars — админ-панель.</div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    const { createClient } = window.supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Элементы
+    const loginScreen = document.getElementById("login-screen");
+    const panelScreen = document.getElementById("panel-screen");
+    const loginForm   = document.getElementById("login-form");
+    const adminEmail  = document.getElementById("admin-email");
+    const adminPass   = document.getElementById("admin-pass");
+    const loginBtn    = document.getElementById("login-btn");
+    const loginError  = document.getElementById("login-error");
+    const postForm    = document.getElementById("post-form");
+    const postId      = document.getElementById("post-id");
+    const postTitle   = document.getElementById("post-title");
+    const postTag     = document.getElementById("post-tag");
+    const postAuthor  = document.getElementById("post-author");
+    const postText    = document.getElementById("post-text");
+    const formTitle   = document.getElementById("form-title");
+    const submitBtn   = document.getElementById("submit-btn");
+    const cancelBtn   = document.getElementById("cancel-btn");
+    const adminList   = document.getElementById("admin-list");
+    const logoutBtn   = document.getElementById("logout-btn");
+    const formMsg     = document.getElementById("form-msg");
+
+    let postsCache = [];
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    function formatDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleString("ru-RU", {
+        day: "2-digit", month: "long", year: "numeric",
+        hour: "2-digit", minute: "2-digit"
+      });
+    }
+
+    // ====== СЕССИЯ ======
+    async function checkSession() {
+      const { data: { session } } = await db.auth.getSession();
+      if (session) showPanel();
+      else showLogin();
+    }
+
+    function showPanel() {
+      loginScreen.style.display = "none";
+      panelScreen.style.display = "block";
+      renderAdminList();
+    }
+
+    function showLogin() {
+      loginScreen.style.display = "block";
+      panelScreen.style.display = "none";
+    }
+
+    // ====== ВХОД ======
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      loginError.style.display = "none";
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Вход…";
+
+      const { error } = await db.auth.signInWithPassword({
+        email: adminEmail.value.trim(),
+        password: adminPass.value
+      });
+
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Войти";
+
+      if (error) {
+        loginError.textContent = error.message === "Invalid login credentials"
+          ? "Неверный email или пароль"
+          : error.message;
+        loginError.style.display = "block";
+        return;
+      }
+
+      adminPass.value = "";
+      showPanel();
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await db.auth.signOut();
+      showLogin();
+    });
+
+    // ====== ФОРМА ======
+    postForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      formMsg.style.display = "none";
+      submitBtn.disabled = true;
+
+      const payload = {
+        title: postTitle.value.trim(),
+        text: postText.value.trim(),
+        tag: postTag.value.trim() || "Новость",
+        author: postAuthor.value.trim() || "Администратор"
+      };
+
+      const isEdit = !!postId.value;
+      let error;
+
+      if (isEdit) {
+        payload.updated_at = new Date().toISOString();
+        ({ error } = await db.from("posts").update(payload).eq("id", postId.value));
+      } else {
+        ({ error } = await db.from("posts").insert(payload));
+      }
+
+      submitBtn.disabled = false;
+
+      if (error) {
+        formMsg.textContent = "Ошибка: " + error.message;
+        formMsg.style.color = "#ff6b6b";
+        formMsg.style.display = "block";
+        return;
+      }
+
+      resetForm();
+      renderAdminList();
+      formMsg.textContent = isEdit ? "Сохранено!" : "Опубликовано!";
+      formMsg.style.color = "var(--green)";
+      formMsg.style.display = "block";
+      setTimeout(() => formMsg.style.display = "none", 2000);
+    });
+
+    cancelBtn.addEventListener("click", resetForm);
+
+    function resetForm() {
+      postId.value = "";
+      postTitle.value = "";
+      postTag.value = "";
+      postAuthor.value = "";
+      postText.value = "";
+      formTitle.textContent = "Новый пост";
+      submitBtn.textContent = "Опубликовать";
+      cancelBtn.style.display = "none";
+    }
+
+    function editPost(id) {
+      const post = postsCache.find(p => String(p.id) === String(id));
+      if (!post) return;
+      postId.value = post.id;
+      postTitle.value = post.title;
+      postTag.value = post.tag || "";
+      postAuthor.value = post.author || "";
+      postText.value = post.text;
+      formTitle.textContent = "Редактирование поста";
+      submitBtn.textContent = "Сохранить";
+      cancelBtn.style.display = "inline-flex";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function removePost(id) {
+      if (!confirm("Удалить этот пост?")) return;
+      const { error } = await db.from("posts").delete().eq("id", id);
+      if (error) {
+        alert("Ошибка: " + error.message);
+        return;
+      }
+      renderAdminList();
+    }
+
+    // ====== СПИСОК ======
+    async function renderAdminList() {
+      const { data, error } = await db
+        .from("posts")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        adminList.innerHTML = `<p style="color:#ff6b6b;">Ошибка: ${escapeHtml(error.message)}</p>`;
+        return;
+      }
+
+      postsCache = data || [];
+
+      if (!postsCache.length) {
+        adminList.innerHTML = `<p style="color:var(--muted);">Постов пока нет.</p>`;
+        return;
+      }
+
+      adminList.innerHTML = postsCache.map(p => `
+        <div class="admin-item">
+          <div class="admin-item-head">
+            <strong>${escapeHtml(p.title)}</strong>
+            <span class="news-tag">${escapeHtml(p.tag)}</span>
+          </div>
+          <div class="news-date" style="margin:4px 0 10px;">${formatDate(p.created_at)} • ${escapeHtml(p.author)}</div>
+          <p style="color:var(--muted); font-size:14px; margin:0 0 14px; white-space:pre-wrap;">
+            ${escapeHtml(p.text).slice(0, 200)}${p.text.length > 200 ? "…" : ""}
+          </p>
+          <div style="display:flex; gap:8px;">
+            <button class="btn" style="padding:8px 14px; font-size:13px;" onclick="editPost(${p.id})">✏️ Изменить</button>
+            <button class="btn" style="padding:8px 14px; font-size:13px; border-color:#7a2a2a; color:#ff8f8f;" onclick="removePost(${p.id})">🗑 Удалить</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    checkSession();
+
+    const burger = document.getElementById("burger");
+    const navLinks = document.getElementById("nav-links");
+    burger.addEventListener("click", () => navLinks.classList.toggle("open"));
+  </script>
+
+</body>
+</html>
